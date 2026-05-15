@@ -28,9 +28,10 @@ export function SignUpForm() {
   async function handleGoogleLogin() {
     setLoading(true);
     setError(null);
-    const result = await signInWithGoogle();
-    if (result?.error) {
-      setError(result.error);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google sign-in failed");
       setLoading(false);
     }
   }

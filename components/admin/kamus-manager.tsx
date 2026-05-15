@@ -220,9 +220,11 @@ export function KamusManager() {
           Download the template, fill in your kamus rows, then upload the CSV.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             data-testid="kamus-template-download-btn"
             href="/api/kamus/template"
+            download="kamus-template.csv"
             className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium hover:bg-muted"
           >
             Download Template
