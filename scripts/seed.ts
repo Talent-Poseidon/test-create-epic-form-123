@@ -58,7 +58,82 @@ async function main() {
     },
   });
 
-  console.log({ originalAdmin, testAdmin, testUser });
+  // Seed Kamus items for E2E tests
+  const seedKamusKom = await prisma.kamusItem.upsert({
+    where: { code: 'SEED-K-001' },
+    update: {},
+    create: {
+      id: 'seed-kamus-1',
+      code: 'SEED-K-001',
+      name: 'Komunikasi Efektif',
+      type: 'kompetensi',
+      description: 'Kemampuan menyampaikan ide secara jelas',
+      behavioralIndicators: 'Berbicara terstruktur; Mendengarkan aktif',
+    },
+  });
+
+  const seedKamusPot = await prisma.kamusItem.upsert({
+    where: { code: 'SEED-P-001' },
+    update: {},
+    create: {
+      id: 'seed-kamus-2',
+      code: 'SEED-P-001',
+      name: 'Logika',
+      type: 'potensi',
+      description: 'Kemampuan berpikir logis',
+      behavioralIndicators: 'Memecahkan masalah; Menarik kesimpulan',
+    },
+  });
+
+  const seedKamusUsed = await prisma.kamusItem.upsert({
+    where: { code: 'SEED-USED-001' },
+    update: {},
+    create: {
+      id: 'seed-kamus-used',
+      code: 'SEED-USED-001',
+      name: 'Kepemimpinan',
+      type: 'kompetensi',
+      description: 'Kemampuan memimpin tim',
+      behavioralIndicators: 'Memberi arahan; Memotivasi tim',
+    },
+  });
+
+  // Seed StandarJabatan that uses one Kamus item — for delete-protection test
+  const seedStandar = await prisma.standarJabatan.upsert({
+    where: { name: 'Seed Manager Standar' },
+    update: {},
+    create: {
+      id: 'seed-standar-1',
+      name: 'Seed Manager Standar',
+      level: 'Manager',
+      description: 'Standar jabatan untuk manager',
+    },
+  });
+
+  await prisma.standarJabatanItem.upsert({
+    where: {
+      standarJabatanId_kamusItemId: {
+        standarJabatanId: seedStandar.id,
+        kamusItemId: seedKamusUsed.id,
+      },
+    },
+    update: {},
+    create: {
+      standarJabatanId: seedStandar.id,
+      kamusItemId: seedKamusUsed.id,
+      expectedLevel: 4,
+    },
+  });
+
+  console.log({
+    originalAdmin,
+    testAdmin,
+    testUser,
+    seedKamusKom,
+    seedKamusPot,
+    seedKamusUsed,
+    seedStandar,
+  });
 }
 
 main()
